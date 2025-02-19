@@ -5,6 +5,7 @@ import Login from '../views/Login.vue';
 import ResetPassword from '../views/ResetPassword.vue';
 import ChangePassword from '../views/ChangePassword.vue';
 import HomeView from '../views/HomeView.vue';
+import SellerRegister from '../views/SellerRegister.vue';
 
 const routes = [
   {
@@ -31,6 +32,11 @@ const routes = [
     path: '/home',
     name: 'homeview',
     component: HomeView
+  },
+  {
+    path: '/register-seller',
+    name: 'sellerregister',
+    component: SellerRegister
   },
 ];
 
