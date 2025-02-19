@@ -6,6 +6,11 @@
       <h3 class="app-subtitle">MOBILE APP</h3>
     </div>
 
+    <!-- Alert Box -->
+    <div v-if="alertMessage" :class="['alert-box', alertType]">
+      {{ alertMessage }}
+    </div>
+
     <div class="login-box">
       <div class="input-container">
         <i class="fas fa-user icon"></i>
@@ -39,6 +44,8 @@ export default {
     return {
       email: '',
       password: '',
+      alertMessage: '',  // Stores alert text
+      alertType: '',  // Stores alert style (success/error/warning)
     };
   },
   methods: {
@@ -47,19 +54,27 @@ export default {
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
 
         if (userCredential.user.emailVerified) {
-          alert('Login Successful!');
-          this.$router.push('/home');
+          this.showAlert('Login Successful!', 'success');
+          setTimeout(() => this.$router.push('/home'), 1000);
         } else {
-          alert('Please verify your email before logging in.');
+          this.showAlert('Please verify your email before logging in.', 'warning');
         }
       } catch (error) {
         console.error('Login Error:', error);
-        alert('Login failed! Check console for details.');
+        this.showAlert('Login failed! Check your credentials.', 'error');
       }
     },
 
     forgotPassword() {
       this.$router.push('/reset-password');
+    },
+
+    showAlert(message, type) {
+      this.alertMessage = message;
+      this.alertType = type;
+      setTimeout(() => {
+        this.alertMessage = '';
+      }, 3000); // Hides alert after 3 seconds
     },
   },
 };
@@ -99,6 +114,35 @@ export default {
   font-size: 18px;
   margin: 0;
   letter-spacing: 3px;
+}
+
+/* Alert Box */
+.alert-box {
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  width: 90%;
+  max-width: 350px;
+}
+
+.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .login-box {

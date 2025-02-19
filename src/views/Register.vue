@@ -1,9 +1,18 @@
 <template>
+  
+
   <div class="register-container">
+    
+    <!-- Alert Box -->
+    <div v-if="alertMessage" :class="['alert-box', alertType]">
+      {{ alertMessage }}
+    </div>
+
     <div class="header">
       <span class="back-icon"><a href="/login">←</a></span>
       <h2>CREATE ACCOUNT</h2>
     </div>
+
 
     <div class="register-box">
       <input type="text" v-model="firstName" placeholder="First Name" required />
@@ -13,7 +22,6 @@
       <input type="text" v-model="contactNumber" placeholder="Contact Number" required />
       <input type="text" v-model="address" placeholder="Address" required />
     
-
       <div class="input-container">
         <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Password" required />
         <span class="eye-icon" @click="togglePassword">
@@ -46,11 +54,13 @@ export default {
       email: '',
       contactNumber: '',
       address: '',
-      role: 'customer', // Default role
+      role: 'customer',
       password: '',
       confirmPassword: '',
       showPassword: false,
-      showConfirmPassword: false
+      showConfirmPassword: false,
+      alertMessage: '',
+      alertType: ''
     };
   },
   methods: {
@@ -60,13 +70,20 @@ export default {
     toggleConfirmPassword() {
       this.showConfirmPassword = !this.showConfirmPassword;
     },
+    showAlert(message, type) {
+      this.alertMessage = message;
+      this.alertType = type;
+      setTimeout(() => {
+        this.alertMessage = '';
+      }, 3000);
+    },
     async register() {
       if (this.password !== this.confirmPassword) {
-        alert('Passwords do not match!');
+        this.showAlert('Passwords do not match!', 'error');
         return;
       }
       if (!this.firstName || !this.lastName || !this.username || !this.email || !this.contactNumber || !this.address) {
-        alert('Please fill out all fields.');
+        this.showAlert('Please fill out all fields.', 'error');
         return;
       }
 
@@ -74,9 +91,8 @@ export default {
         const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
         await sendEmailVerification(user);
-        alert('Verification email sent! Please check your inbox.');
+        this.showAlert('Verification email sent! Please check your inbox.', 'success');
 
-        // Store user data in Firestore with userId
         await setDoc(doc(db, 'users', user.uid), {
           userId: user.uid,
           firstName: this.firstName,
@@ -89,10 +105,12 @@ export default {
           isVerified: false
         });
 
-        this.$router.push('/login');
+        setTimeout(() => {
+          this.$router.push('/login');
+        }, 2000);
       } catch (error) {
         console.error('Error during registration:', error);
-        alert('Registration failed! Check console for details.');
+        this.showAlert('Registration failed! Check console for details.', 'error');
       }
     }
   }
@@ -113,10 +131,11 @@ export default {
 .header {
   background: #2e5c31;
   width: 100%;
+  max-width: 380px;
   padding: 10px;
   text-align: center;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -130,19 +149,33 @@ export default {
   font-size: 20px;
 }
 
-.menu-icon {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-  color: white;
-  cursor: pointer;
-  font-size: 20px;
-}
-
 h2 {
   color: white;
   font-size: 22px;
   margin: 0;
+}
+
+.alert-box {
+  width: 100%;
+  max-width: 380px;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .register-box {
@@ -152,7 +185,7 @@ h2 {
   width: 100%;
   max-width: 380px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: -10px;
+  margin-top: 10px;
 }
 
 input[type="email"],
@@ -197,23 +230,5 @@ select {
 
 .register-button:hover {
   background: #26492a;
-}
-
-/* Responsive Design */
-@media (max-width: 600px) {
-  .register-box {
-    padding: 15px;
-  }
-  input[type="email"],
-  input[type="text"],
-  input[type="password"],
-  select {
-    font-size: 14px;
-    padding: 10px 15px;
-  }
-  .register-button {
-    font-size: 14px;
-    padding: 10px;
-  }
 }
 </style>
