@@ -1,39 +1,77 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-green-400 to-green-600 p-6 flex flex-col items-center text-center">
-      <h2 class="text-3xl font-bold text-white">Seller Registration</h2>
-      
-      <form @submit.prevent="registerSeller" class="bg-white p-6 rounded-lg shadow-lg mt-6 w-full max-w-md">
-        <div class="mb-4">
-          <label class="block text-left font-bold">Full Name</label>
-          <input type="text" v-model="seller.name" required class="w-full p-3 border rounded-lg">
-        </div>
+    <div class="register-container">
+        <h1 class="app-title">FarmXpress</h1>
   
-        <div class="mb-4">
-          <label class="block text-left font-bold">Email</label>
-          <input type="email" v-model="seller.email" required class="w-full p-3 border rounded-lg">
-        </div>
+      <div class="register-box">
+        <h2 class="text-xl font-semibold text-gray-700">Seller Registration</h2>
   
-        <div class="mb-4">
-          <label class="block text-left font-bold">Password</label>
-          <input type="password" v-model="seller.password" required class="w-full p-3 border rounded-lg">
-        </div>
+        <form @submit.prevent="registerSeller">
+          <!-- Step 1: Personal Information -->
+          <div v-if="step === 1">
+            <h3 class="section-title">Personal Information</h3>
+            <div v-for="(label, key) in personalInfo" :key="key" class="input-container">
+              <input type="text" v-model="seller[key]" :placeholder="label" required />
+            </div>
+          </div>
   
-        <div class="mb-4">
-          <label class="block text-left font-bold">Farm Name</label>
-          <input type="text" v-model="seller.farmName" required class="w-full p-3 border rounded-lg">
-        </div>
+          <!-- Step 2: Farm/Business Details -->
+          <div v-if="step === 2">
+            <h3 class="section-title">Farm/Business Details</h3>
+            <div v-for="(label, key) in farmDetails" :key="key" class="input-container">
+              <input type="text" v-model="seller[key]" :placeholder="label" required />
+            </div>
+          </div>
   
-        <div class="mb-4">
-          <label class="block text-left font-bold">Farm Location</label>
-          <input type="text" v-model="seller.farmLocation" required class="w-full p-3 border rounded-lg">
-        </div>
+          <!-- Step 3: Payment & Banking Information -->
+          <div v-if="step === 3">
+            <h3 class="section-title">Payment & Banking Information</h3>
+            <div v-for="(label, key) in paymentInfo" :key="key" class="input-container">
+              <input type="text" v-model="seller[key]" :placeholder="label" required />
+            </div>
+          </div>
   
-        <button type="submit" class="mt-4 px-6 py-3 bg-yellow-500 text-white font-bold rounded-full shadow-md hover:bg-yellow-600 transition">
-          Register as Seller
-        </button>
+          <!-- Step 4: Verification Documents -->
+          <div v-if="step === 4">
+            <h3 class="section-title">Verification Documents</h3>
+            <div v-for="(label, key) in verificationDocs" :key="key" class="input-container">
+                <input type="file" @change="handleFileUpload($event, key)" />
+            </div>
+          </div>
   
-        <button @click="goBack" class="mt-2 text-gray-600 underline block">Back to Home</button>
-      </form>
+          <!-- Step 5: Delivery & Logistics -->
+          <div v-if="step === 5">
+            <h3 class="section-title">Delivery & Logistics</h3>
+            <div v-for="(label, key) in deliveryInfo" :key="key" class="input-container">
+              <input type="text" v-model="seller[key]" :placeholder="label" required />
+            </div>
+          </div>
+  
+          <!-- Step 6: Additional Details -->
+          <div v-if="step === 6">
+            <h3 class="section-title">Additional Details</h3>
+            <div v-for="(label, key) in additionalDetails" :key="key" class="input-container">
+              <input type="text" v-model="seller[key]" :placeholder="label" />
+            </div>
+          </div>
+  
+          <!-- Step 7: Terms & Agreement -->
+          <div v-if="step === 7">
+            <h3 class="section-title">Terms & Agreement</h3>
+            <div class="checkbox-container">
+              <label v-for="(label, key) in termsAgreement" :key="key">
+                <input type="checkbox" v-model="seller[key]" required /> {{ label }}
+              </label>
+            </div>
+          </div>
+  
+          <!-- Navigation Buttons -->
+          <div class="button-group">
+            <button v-if="step > 1" @click="step--" type="button" class="back-button">Back</button>
+            <button v-if="step < 7" @click="step++" type="button" class="next-button">Next</button>
+            <button v-if="step === 7" type="submit" class="submit-button">Submit</button>
+          </div>
+        </form>
+      </div>
     </div>
   </template>
   
@@ -42,24 +80,146 @@
     name: 'SellerRegister',
     data() {
       return {
-        seller: {
-          name: '',
-          email: '',
-          password: '',
-          farmName: '',
-          farmLocation: ''
+        step: 1,
+        seller: {},
+        personalInfo: {
+          firstName: 'First Name', lastName: 'Last Name', contact: 'Contact Number', email: 'Email', address: 'Address', zipCode: 'Zip Code'
+        },
+        farmDetails: {
+          farmName: 'Farm/Business Name', farmAddress: 'Farm Location (Address, City, Province)', farmType: 'Farm Type',
+          products: 'Products to Sell', years: 'Years in Farming'
+        },
+        paymentInfo: {
+          paymentMethod: 'Preferred Payment Method', accountName: 'Account Name', accountNumber: 'Account Number'
+        },
+        verificationDocs: {
+          validID: 'Valid ID', businessPermit: 'Business Permit', farmCert: 'Farm Certification'
+        },
+        deliveryInfo: {
+          deliveryMethod: 'Delivery Method', operatingHours: 'Operating Hours', areasCovered: 'Areas Covered for Delivery'
+        },
+        additionalDetails: {
+          farmPhotos: 'Farm Photos', socialMedia: 'Social Media Links / Website', wholesale: 'Wholesale Availability'
+        },
+        termsAgreement: {
+          agreeTerms: 'Agree to Terms & Conditions', consentData: 'Consent to Data Privacy Policy', acknowledgeResp: 'Acknowledge Seller Responsibilities'
         }
       };
     },
     methods: {
       registerSeller() {
-        alert('Seller registration successful!');
-        this.$router.push('/');
+        alert('Registration submitted!');
       },
-      goBack() {
-        this.$router.push('/home');
+      handleFileUpload(event, key) {
+        const file = event.target.files[0];
+        this.seller[key] = file;
       }
     }
-  }
+  };
   </script>
-  
+    
+    <style scoped>
+    .register-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #f2f2f2;
+        padding: 20px;
+    }
+    
+    
+    
+    .app-title {
+        color: #2e5c31;
+        font-size: 36px;
+        font-weight: bold;
+        margin: 0;
+        letter-spacing: 2px;
+        padding-bottom: 20px;
+    }
+    
+    
+    
+    .register-box {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        width: 90%;
+        max-width: 350px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2e5c31;
+    }
+    
+    .input-container {
+        display: flex;
+        align-items: center;
+        background: #eaeaea;
+        border-radius: 50px;
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .icon {
+        margin-right: 10px;
+        color: #999;
+        font-size: 18px;
+    }
+    
+    input {
+        border: none;
+        background: transparent;
+        outline: none;
+        flex: 1;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    
+    .back-button, .next-button, .submit-button {
+        border: none;
+        border-radius: 50px;
+        padding: 12px;
+        width: 100%;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .back-button {
+        background: #b0b0b0;
+        color: white;
+    }
+    
+    .next-button {
+        background: #2e5c31;
+        color: white;
+    }
+    
+    .next-button:hover {
+        background: #26492a;
+    }
+    
+    .submit-button {
+        background: #0056b3;
+        color: white;
+    }
+    
+    .submit-button:hover {
+        background: #004494;
+    }
+    </style>
+    
