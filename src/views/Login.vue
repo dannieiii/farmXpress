@@ -30,32 +30,42 @@
 
       <button class="login-button" @click="login">Login</button>
 
-      <p>Don't have an account? <a href="/">Create an account</a></p>
+      <p>Don't have an account? <a href="/registration">Create an account</a></p>
     </div>
   </div>
 </template>
 
 <script>
-import { auth } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 
 export default {
   data() {
     return {
       email: '',
       password: '',
-      alertMessage: '',  // Stores alert text
-      alertType: '',  // Stores alert style (success/error/warning)
+      alertMessage: '',
+      alertType: '',
     };
   },
   methods: {
     async login() {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+        const user = userCredential.user;
 
-        if (userCredential.user.emailVerified) {
+        if (user.emailVerified) {
+          // Update Firestore's isVerified field
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists() && !userDoc.data().isVerified) {
+            await updateDoc(userDocRef, { isVerified: true });
+          }
+
           this.showAlert('Login Successful!', 'success');
-          setTimeout(() => this.$router.push('/home'), 1000);
+          setTimeout(() => this.$router.push('/'), 1000);
         } else {
           this.showAlert('Please verify your email before logging in.', 'warning');
         }
@@ -74,11 +84,12 @@ export default {
       this.alertType = type;
       setTimeout(() => {
         this.alertMessage = '';
-      }, 3000); // Hides alert after 3 seconds
+      }, 3000);
     },
   },
 };
 </script>
+
 
 <style scoped>
 .login-container {

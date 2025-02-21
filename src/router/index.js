@@ -6,10 +6,11 @@ import ResetPassword from '../views/ResetPassword.vue';
 import ChangePassword from '../views/ChangePassword.vue';
 import HomeView from '../views/HomeView.vue';
 import SellerRegister from '../views/SellerRegister.vue';
+import SellerHome from '../views/SellerHome.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/registration',
     name: 'registration',
     component: Register
   },
@@ -29,7 +30,7 @@ const routes = [
     component: ChangePassword
   },
   {
-    path: '/home',
+    path: '/',
     name: 'homeview',
     component: HomeView
   },
@@ -38,6 +39,11 @@ const routes = [
     name: 'sellerregister',
     component: SellerRegister
   },
+  {
+    path: '/seller-home',
+    name: 'sellerhome',
+    component: SellerHome
+  }
 ];
 
 const router = createRouter({
