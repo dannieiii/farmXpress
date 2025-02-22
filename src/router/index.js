@@ -7,6 +7,11 @@ import ChangePassword from '../views/ChangePassword.vue';
 import HomeView from '../views/HomeView.vue';
 import SellerRegister from '../views/SellerRegister.vue';
 import SellerHome from '../views/SellerHome.vue';
+import ProductCategory from '../views/ProductCategory.vue';
+import Category from '../views/Category.vue';
+import AddCategory from '../views/AddCategory.vue';
+import Product from '../views/Product.vue';
+import AddProduct from '../views/AddProduct.vue';
 
 const routes = [
   {
@@ -43,6 +48,31 @@ const routes = [
     path: '/seller-home',
     name: 'sellerhome',
     component: SellerHome
+  },
+  {
+    path: '/product-category',
+    name: 'productcategory',
+    component: ProductCategory
+  },
+  {
+    path: '/category',
+    name: 'category',
+    component: Category
+  },
+  {
+    path: '/add-category',
+    name: 'addcategory',
+    component: AddCategory
+  },
+  {
+    path: '/product',
+    name: 'product',
+    component: Product
+  },
+  {
+    path: '/add-product',
+    name: 'addproduct',
+    component: AddProduct
   }
 ];
 
