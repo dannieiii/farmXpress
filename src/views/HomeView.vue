@@ -6,7 +6,9 @@
       <input type="text" class="search-bar" placeholder="Search for products...">
       <div class="icons">
         <i class="fas fa-comments"></i>
-        <i class="fas fa-user-circle"></i>
+        <router-link to="/profile" class="profile-link">
+          <i class="fas fa-user-circle"></i>
+        </router-link>
       </div>
     </div>
 
@@ -36,7 +38,8 @@
           <p>Herbs</p>
         </div>
       </div>
-      <button class="become-seller">Become a Seller</button>
+      <router-link to="/register-seller" class="become-seller">Become a Seller</router-link>
+
     </div>
 
     <!-- Bottom Navigation -->
@@ -93,6 +96,19 @@ export default {
   font-size: 24px;
   margin-left: 15px;
   cursor: pointer;
+}
+
+.profile-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.profile-link i {
+  transition: transform 0.2s;
+}
+
+.profile-link i:hover {
+  transform: scale(1.1);
 }
 
 .main-content {

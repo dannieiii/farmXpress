@@ -1,6 +1,6 @@
 // src/firebaseConfig.js
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
@@ -18,5 +18,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// Automatically store user in localStorage on login/logout
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    localStorage.setItem("user", JSON.stringify({ userId: user.uid }));
+  } else {
+    localStorage.removeItem("user");
+  }
+});
 
 export { auth, db };

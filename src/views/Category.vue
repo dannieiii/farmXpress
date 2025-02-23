@@ -22,7 +22,7 @@
             <div class="category-list">
                 <div v-for="(category, index) in categories" :key="index" class="category-item">
                     <img v-if="category.image" :src="category.image" alt="Category Image" class="category-image" />
-                    <p>{{ category.name }}</p>
+                    <p>{{ category.categoryName }}</p> <!-- Updated field name -->
                 </div>
             </div>
 
@@ -51,12 +51,32 @@
 </template>
 
 <script>
-import { inject } from 'vue';
+import { ref, onMounted } from 'vue';
+import { db } from '../firebaseConfig';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 
 export default {
     name: "Category",
     setup() {
-        const categories = inject("categories");
+        const categories = ref([]);
+        const auth = getAuth();
+        const user = auth.currentUser; // Get logged-in seller
+
+        onMounted(() => {
+            if (user) {
+                const sellerId = user.uid;
+                const categoryCollection = collection(db, 'categories');
+                const q = query(categoryCollection, where("sellerId", "==", sellerId)); // Filter categories by sellerId
+
+                onSnapshot(q, (snapshot) => {
+                    categories.value = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                });
+            }
+        });
 
         const goToAddCategory = () => {
             window.location.href = "/add-category";
@@ -66,6 +86,8 @@ export default {
     }
 };
 </script>
+
+
 
 <style scoped>
 .add-category {

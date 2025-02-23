@@ -12,6 +12,7 @@ import Category from '../views/Category.vue';
 import AddCategory from '../views/AddCategory.vue';
 import Product from '../views/Product.vue';
 import AddProduct from '../views/AddProduct.vue';
+import Profile from '../views/Profile.vue';
 
 const routes = [
   {
@@ -73,6 +74,11 @@ const routes = [
     path: '/add-product',
     name: 'addproduct',
     component: AddProduct
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile
   }
 ];
 

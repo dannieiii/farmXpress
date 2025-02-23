@@ -12,59 +12,125 @@
         <!-- Main Content -->
         <div class="main-content">
             <h2>Manage Your Products</h2>
-            <p>You currently have {{ products.length }} products. Expand your offerings by adding new products.</p>
+            <p>You currently have {{ products.length }} products.</p>
 
-            <div class="product-section">
-                <span class="product-label">Total Products: {{ products.length }}</span>
-            </div>
-
-            <!-- Display Products -->
-            <div class="product-list">
+            <!-- Table for Web, Cards for Mobile -->
+            <div v-if="isMobile" class="product-list">
                 <div v-for="(product, index) in products" :key="index" class="product-item">
-                    <img v-if="product.image" :src="product.image" alt="Product Image" class="product-image" />
-                    <p>{{ product.name }}</p>
-                    <p class="product-price">₱{{ product.price.toFixed(2) }}</p>
+                    <img :src="product.image" alt="Product Image" class="product-image" />
+                    <div class="product-details">
+                        <p class="product-name">{{ product.productName }}</p>
+                        <p class="product-price">₱{{ product.price.toFixed(2) }}</p>
+                        <p class="product-category">{{ product.category }}</p>
+                        <p class="product-stock">Stock: {{ product.stock }}</p>
+                    </div>
+                    <div class="options">
+                        <i class="fas fa-ellipsis-v" @click="toggleMenu(index)"></i>
+                        <div v-if="menuIndex === index" class="menu">
+                            <p @click="editProduct(product)">Edit</p>
+                            <p @click="hideProduct(product)">Hide</p>
+                            <p @click="deleteProduct(product.id)">Delete</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <table v-else class="product-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(product, index) in products" :key="index">
+                        <td><img :src="product.image" alt="Product Image" class="table-image" /></td>
+                        <td>{{ product.productName }}</td>
+                        <td>₱{{ product.price.toFixed(2) }}</td>
+                        <td>{{ product.category }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            <i class="fas fa-ellipsis-v" @click="toggleMenu(index)"></i>
+                            <div v-if="menuIndex === index" class="menu">
+                                <p @click="editProduct(product)">Edit</p>
+                                <p @click="hideProduct(product)">Hide</p>
+                                <p @click="deleteProduct(product.id)">Delete</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
             <button class="add-product-btn" @click="goToAddProduct">Add Product</button>
         </div>
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <router-link to="/seller-home">
-                <i class="fas fa-home"></i>
-            </router-link>
-            <router-link to="/add-product">
-                <i class="fas fa-plus-circle"></i>
-            </router-link>
-            <router-link to="/orders">
-                <i class="fas fa-shopping-cart"></i>
-            </router-link>
-            <router-link to="/sales">
-                <i class="fas fa-chart-line"></i>
-            </router-link>
-            <router-link to="/notifications">
-                <i class="fas fa-bell"></i>
-            </router-link>
+            <router-link to="/seller-home"><i class="fas fa-home"></i></router-link>
+            <router-link to="/add-product"><i class="fas fa-plus-circle"></i></router-link>
+            <router-link to="/orders"><i class="fas fa-shopping-cart"></i></router-link>
+            <router-link to="/sales"><i class="fas fa-chart-line"></i></router-link>
+            <router-link to="/notifications"><i class="fas fa-bell"></i></router-link>
         </div>
     </div>
 </template>
 
 <script>
-import { inject } from 'vue';
+import { ref, onMounted } from "vue";
+import { db } from "../firebaseConfig";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export default {
     name: "Product",
     setup() {
-        const products = inject("products");
+        const products = ref([]);
+        const menuIndex = ref(null);
+        const isMobile = ref(window.innerWidth <= 768);
+
+        const fetchProducts = async () => {
+            const querySnapshot = await getDocs(collection(db, "products"));
+            products.value = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+        };
 
         const goToAddProduct = () => {
             window.location.href = "/add-product";
         };
 
-        return { products, goToAddProduct };
-    }
+        const toggleMenu = (index) => {
+            menuIndex.value = menuIndex.value === index ? null : index;
+        };
+
+        const editProduct = (product) => {
+            console.log("Edit product:", product);
+        };
+
+        const hideProduct = (product) => {
+            console.log("Hide product:", product);
+        };
+
+        const deleteProduct = async (id) => {
+            if (confirm("Are you sure you want to delete this product?")) {
+                await deleteDoc(doc(db, "products", id));
+                fetchProducts();
+            }
+        };
+
+        onMounted(() => {
+            fetchProducts();
+            window.addEventListener("resize", () => {
+                isMobile.value = window.innerWidth <= 768;
+            });
+        });
+
+        return { products, menuIndex, isMobile, goToAddProduct, toggleMenu, editProduct, hideProduct, deleteProduct };
+    },
 };
 </script>
 
@@ -96,10 +162,90 @@ export default {
     padding: 20px;
 }
 
-.product-section {
-    margin: 20px 0;
-    font-size: 18px;
+.product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    position: relative;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.product-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.product-name {
+    font-size: 16px;
     font-weight: bold;
+}
+
+.product-price {
+    color: #2e5c31;
+    font-weight: bold;
+}
+
+.options {
+    position: relative;
+}
+
+.options i {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.menu {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    width: 100px;
+}
+
+.menu p {
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.menu p:hover {
+    background: #f2f2f2;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 10px;
+}
+
+.product-table th, .product-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
 }
 
 .add-product-btn {
@@ -110,35 +256,11 @@ export default {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 .add-product-btn:hover {
     background: #256127;
-}
-
-.product-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.product-item {
-    background: white;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 5px;
-    text-align: center;
-}
-
-.product-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 5px;
-}
-
-.product-price {
-    color: #2e5c31;
-    font-weight: bold;
 }
 
 .bottom-nav {

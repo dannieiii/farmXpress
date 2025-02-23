@@ -8,26 +8,25 @@
       <div class="form-container">
         <div class="section">
           <h2>Product Info</h2>
-          <input type="text" placeholder="Product Name" v-model="product.name" />
+          <input type="text" placeholder="Product Name" v-model="product.productName" />
           <input type="file" @change="uploadImage" />
           <textarea placeholder="Description" v-model="product.description"></textarea>
           <input type="text" placeholder="Ribbon (e.g., Best Seller)" v-model="product.ribbon" />
         </div>
     
         <div class="section">
-            <h2>Category</h2>
-            <select v-model="product.category">
-                <option value="All Products">All Products</option>
-                <option v-for="(category, index) in categories" :key="index" :value="category">
-                {{ category }}
-                </option>
-            </select>
-            <div class="checkbox-container">
-                <input type="checkbox" id="showOnline" v-model="product.showOnline" />
-                <label for="showOnline">Show in online store</label>
-            </div>
+          <h2>Category</h2>
+          <select v-model="product.category">
+            <option value="All Products">All Products</option>
+            <option v-for="(category, index) in categories" :key="index" :value="category.categoryName">
+              {{ category.categoryName }}
+            </option>
+          </select>
+          <div class="checkbox-container">
+            <input type="checkbox" id="showOnline" v-model="product.showOnline" />
+            <label for="showOnline">Show in online store</label>
+          </div>
         </div>
-
     
         <div class="section">
           <h2>Price Info</h2>
@@ -36,7 +35,7 @@
             <span>On Sale:</span>
             <button @click="toggleSale" :class="{ active: product.onSale }">{{ product.onSale ? 'ON' : 'OFF' }}</button>
           </div>
-          <input type="number" placeholder="Cost of Goods" v-model="product.cost" />
+          <input type="number" placeholder="Cost" v-model="product.cost" />
           <input type="number" placeholder="Profit" v-model="product.profit" />
         </div>
     
@@ -65,70 +64,96 @@
         <button class="save" @click="saveProduct">Save</button>
       </div>
     </div>
-  </template>
+</template>
   
-  <script>
-import { ref, inject } from "vue";
-import { useRouter } from "vue-router"; // Import Vue Router
-
+<script>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { db } from "../firebaseConfig";
+import { collection, getDocs, addDoc } from "firebase/firestore";
+  
 export default {
   setup() {
-    const router = useRouter(); // Initialize router
-    const categories = inject("categories");
+    const router = useRouter();
+    const categories = ref([]);
     const product = ref({
-      name: "",
+      productName: "",
       description: "",
       ribbon: "",
       category: "All Products",
-      price: "",
-      onSale: false,
-      cost: "",
-      profit: "",
-      stock: "",
+      price: null,
+      cost: null,
+      profit: null,
+      stock: null,
       code: "",
-      weight: "",
-      preorder: false,
-      preorderMessage: "",
-      preorderLimit: "",
+      weight: null,
+      image: "",
       showOnline: false,
+      onSale: false,
+      preorder: false,
+      preorderLimit: null,
+      preorderMessage: "",
     });
-
+  
     const uploadImage = (event) => {
       const file = event.target.files[0];
-      if (file) product.value.image = URL.createObjectURL(file);
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          product.value.image = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     };
-
+  
     const toggleSale = () => {
       product.value.onSale = !product.value.onSale;
     };
-
+  
     const togglePreorder = () => {
       product.value.preorder = !product.value.preorder;
     };
-
+  
+    const saveProduct = async () => {
+      if (!product.value.productName || !product.value.price) {
+        alert("Product Name and Price are required.");
+        return;
+      }
+  
+      try {
+        await addDoc(collection(db, "products"), {
+          ...product.value,
+        });
+  
+        alert("Product added successfully!");
+        router.push("/product");
+      } catch (error) {
+        console.error("Error adding product:", error);
+        alert("Failed to add product.");
+      }
+    };
+  
+    const fetchCategories = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "categories"));
+        categories.value = querySnapshot.docs.map(doc => doc.data());
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+  
+    onMounted(fetchCategories);
+  
     const cancel = () => {
-      router.go(-1); // Navigate back
+      router.push("/product");
     };
-
-    const saveProduct = () => {
-      console.log("Product saved", product.value);
-      // You can replace this with an API call to save the product
-      alert("Product saved successfully!");
-      router.push("/products"); // Redirect to the product list page
-    };
-
-    return {
-      product,
-      categories,
-      uploadImage,
-      toggleSale,
-      togglePreorder,
-      cancel,
-      saveProduct,
-    };
+  
+    return { categories, product, uploadImage, toggleSale, togglePreorder, saveProduct, cancel };
   },
 };
 </script>
+
+
 
   <style scoped>
   .add-product {
@@ -155,13 +180,6 @@ export default {
     cursor: pointer;
   }
   
-  .checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-top: 10px;
-}
-
   .form-container {
     display: flex;
   flex-direction: column;

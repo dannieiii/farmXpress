@@ -1,57 +1,71 @@
 <template>
-    <div class="add-category">
-        <div class="header">
-            <i class="fas fa-arrow-left" @click="cancel"></i>
-            <h1>Add Category</h1>
-        </div>
+    <div class="add-category-container">
+        <div class="add-category-form">
+            <h2>Add New Category</h2>
+            <p>Fill in the details below to create a new category.</p>
 
-        <div class="form-container">
-            <div class="section">
-                <h2>Category Info</h2>
-                <input type="text" placeholder="Category Name" v-model="categoryName" />
-                <input type="file" @change="handleImageUpload" />
+            <div class="form-group">
+                <label for="category-name">Category Name:</label>
+                <input type="text" id="category-name" v-model="categoryName" placeholder="Enter category name" required>
             </div>
-        </div>
 
-        <div class="buttons">
-            <button class="cancel" @click="cancel">Cancel</button>
-            <button class="save" @click="submitCategory">Save</button>
+            <div class="form-group">
+                <label for="category-image">Category Image:</label>
+                <input type="file" id="category-image" @change="handleImageUpload">
+            </div>
+
+            <!-- Save & Cancel Buttons -->
+            <div class="button-group">
+                <button class="primary-btn" @click="submitCategory">Save</button>
+                <button class="secondary-btn" @click="cancel">Cancel</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { db } from '../firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
 
 export default {
     setup() {
         const categoryName = ref('');
         const categoryImage = ref(null);
-        const addCategory = inject('addCategory');
         const router = useRouter();
 
         const handleImageUpload = (event) => {
             const file = event.target.files[0];
             if (file) {
-                categoryImage.value = URL.createObjectURL(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    categoryImage.value = e.target.result;
+                };
+                reader.readAsDataURL(file);
             }
         };
 
-        const submitCategory = () => {
+        const submitCategory = async () => {
             if (!categoryName.value) {
                 alert('Please enter a category name.');
                 return;
             }
 
-            addCategory({
-                name: categoryName.value,
-                image: categoryImage.value,
-            });
+            try {
+                await addDoc(collection(db, 'categories'), {
+                    categoryName: categoryName.value,
+                    image: categoryImage.value || '',
+                });
 
-            categoryName.value = '';
-            categoryImage.value = null;
-            router.push('/category');
+                alert('Category added successfully!');
+                categoryName.value = '';
+                categoryImage.value = null;
+                router.push('/category');
+            } catch (error) {
+                console.error('Error adding category:', error);
+                alert('Failed to add category.');
+            }
         };
 
         const cancel = () => {
@@ -63,49 +77,32 @@ export default {
 };
 </script>
 
+
 <style scoped>
-.add-category {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #2e5c31;
-    color: white;
-    padding: 15px;
-    border-radius: 10px 10px 0 0;
-}
-
-.header i {
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.form-container {
+/* Container Styles */
+.add-category-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: 10px;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+    min-height: 100vh;
 }
 
-.section {
+/* Form Styles */
+.add-category-form {
     background: white;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
 }
 
-h2 {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #333;
+/* Input Fields */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 input {
@@ -116,13 +113,14 @@ input {
     font-size: 16px;
 }
 
-.buttons {
+/* Save & Cancel Buttons */
+.button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-.cancel, .save {
+.primary-btn, .secondary-btn {
     flex: 1;
     padding: 10px 15px;
     border: none;
@@ -132,21 +130,70 @@ input {
     transition: 0.3s ease-in-out;
 }
 
-.cancel {
-    background: #888;
-    color: white;
-}
-
-.cancel:hover {
-    background: #666;
-}
-
-.save {
+.primary-btn {
     background: #2e5c31;
     color: white;
 }
 
-.save:hover {
+.primary-btn:hover {
     background: #256127;
+}
+
+.secondary-btn {
+    background: #888;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background: #666;
+}
+
+/* Additional Options Section */
+.additional-options {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.site-btn, .product-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.site-btn {
+    background: #1e90ff;
+    color: white;
+}
+
+.site-btn:hover {
+    background: #0c6cd0;
+}
+
+.product-btn {
+    background: #ff8c00;
+    color: white;
+}
+
+.product-btn:hover {
+    background: #d37500;
+}
+
+/* Responsive Design */
+@media (max-width: 450px) {
+    .add-category-form {
+        width: 90%;
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .additional-options {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
 </style>

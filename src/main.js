@@ -8,6 +8,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
+
 // Initialize Firebase Authentication
 const auth = getAuth();
 
