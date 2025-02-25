@@ -3,43 +3,101 @@
     <!-- Header -->
     <div class="header">
       <h1 class="app-title">FarmXpress</h1>
-      <input type="text" class="search-bar" placeholder="Search for products...">
-      <div class="icons">
-        <i class="fas fa-comments"></i>
-        <router-link to="/profile" class="profile-link">
-          <i class="fas fa-user-circle"></i>
-        </router-link>
+
+      <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search for products..." />
+        <div class="icons">
+          <i class="fas fa-comments"></i>
+          <router-link to="/profile" class="profile-link">
+            <i class="fas fa-user-circle"></i>
+          </router-link>
+        </div>
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-      <h2>Welcome, User!</h2>
-      <p>Discover fresh and organic farm products straight from local farmers.</p>
-      <div class="promo-banner">
-        <i class="fas fa-tag"></i>
-        <p>Exclusive Deals! Get fresh produce at the best prices.</p>
-      </div>
-      <div class="categories">
-        <div class="category">
-          <i class="fas fa-carrot"></i>
-          <p>Vegetables</p>
-        </div>
-        <div class="category">
+    <!-- Categories -->
+    <div class="categories">
+      <div class="category">
+        <button class="category-btn">
           <i class="fas fa-apple-alt"></i>
-          <p>Fruits</p>
-        </div>
-        <div class="category">
-          <i class="fas fa-egg"></i>
-          <p>Dairy & Eggs</p>
-        </div>
-        <div class="category">
+        </button>
+        <p>Fruits</p>
+      </div>
+      <div class="category">
+        <button class="category-btn">
+          <i class="fas fa-carrot"></i>
+        </button>
+        <p>Vegetables</p>
+      </div>
+      <div class="category">
+        <button class="category-btn">
+          <i class="fas fa-drumstick-bite"></i>
+        </button>
+        <p>Meat & Poultry</p>
+      </div>
+      <div class="category">
+        <button class="category-btn">
+          <i class="fas fa-fish"></i>
+        </button>
+        <p>Seafood</p>
+      </div>
+      <div class="category">
+        <button class="category-btn">
           <i class="fas fa-seedling"></i>
-          <p>Herbs</p>
+        </button>
+        <p>Grains</p>
+      </div>
+      <div class="category dropdown">
+        <button class="category-btn" @click="toggleDropdown">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+        <p>Others</p>
+        <div v-if="showDropdown" class="dropdown-content">
+          <p>Organic</p>
+          <p>Beverages</p>
+          <p>Livestock</p>
+          <p>Seeds</p>
         </div>
       </div>
-      <router-link to="/register-seller" class="become-seller">Become a Seller</router-link>
+    </div>
 
+    <!-- Featured Products -->
+    <div class="product-section">
+      <h2>New Collection</h2>
+      <div class="product-list">
+        <div class="product">
+          <img src="@/assets/picture1.jpg" alt="Product" />
+          <p class="product-title">Garlic Butter Roast Chicken</p>
+          <span class="product-price">₱320</span>
+          <button class="add-to-cart-btn">
+            <i class="fas fa-shopping-basket"></i> Add to Cart
+          </button>
+        </div>
+        <div class="product">
+          <img src="@/assets/picture1.jpg" alt="Product" />
+          <p class="product-title">Healthy Premium Steak</p>
+          <span class="product-price">₱450</span>
+          <button class="add-to-cart-btn">
+            <i class="fas fa-shopping-basket"></i> Add to Cart
+          </button>
+        </div>
+        <div class="product">
+          <img src="@/assets/picture1.jpg" alt="Product" />
+          <p class="product-title">Fresh Organic Apples</p>
+          <span class="product-price">₱120</span>
+          <button class="add-to-cart-btn">
+            <i class="fas fa-shopping-basket"></i> Add to Cart
+          </button>
+        </div>
+        <div class="product">
+          <img src="@/assets/picture1.jpg" alt="Product" />
+          <p class="product-title">Farm-Grown Carrots</p>
+          <span class="product-price">₱80</span>
+          <button class="add-to-cart-btn">
+            <i class="fas fa-shopping-basket"></i> Add to Cart
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -56,6 +114,16 @@
 <script>
 export default {
   name: "UserHome",
+  data() {
+    return {
+      showDropdown: false,
+    };
+  },
+  methods: {
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+  },
 };
 </script>
 
@@ -68,36 +136,52 @@ export default {
   background: #f2f2f2;
 }
 
+/* Header */
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  justify-content: space-between;
+  padding: 10px;
   background: #2e5c31;
   color: white;
   flex-wrap: wrap;
 }
 
-.search-bar {
+.app-title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+/* Search Bar & Icons */
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-grow: 1;
-  margin: 0 10px;
+  max-width: 100%;
+  margin: 10px 0;
+}
+
+.search-bar {
+  width: 60%; /* Minimized width */
   padding: 8px;
   border-radius: 5px;
   border: none;
-  min-width: 150px;
+  max-width: 300px; /* Limits width on larger screens */
 }
 
 .icons {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .icons i {
-  font-size: 24px;
-  margin-left: 15px;
+  font-size: 20px;
   cursor: pointer;
 }
 
+/* Profile Link */
 .profile-link {
   text-decoration: none;
   color: inherit;
@@ -111,54 +195,113 @@ export default {
   transform: scale(1.1);
 }
 
-.main-content {
-  text-align: center;
-  padding: 20px;
-}
-
-.promo-banner {
-  background: #ffcc00;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 10px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 80%;
-}
-
-.promo-banner i {
-  margin-right: 8px;
-}
-
+/* Categories */
 .categories {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .category {
   text-align: center;
+  flex: 1 1 20%; /* Adjusted for 5 items per row */
+  max-width: 20%;
 }
 
-.category i {
-  font-size: 30px;
-  color: #2e5c31;
-}
-
-.become-seller {
+.category-btn {
   background: #2e5c31;
   color: white;
-  padding: 10px 15px;
   border: none;
-  border-radius: 5px;
+  padding: 10px;
+  border-radius: 50%;
   cursor: pointer;
-  width: 80%;
-  max-width: 300px;
-  margin: 10px auto;
+  width: 50px;
+  height: 50px;
 }
 
+.category-btn i {
+  font-size: 20px;
+}
+
+.category p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.dropdown-content {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1;
+}
+
+.dropdown-content p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+/* Featured Products */
+.product-section {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.product-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.product {
+  flex: 1 1 45%; /* Two products per row */
+  max-width: 45%;
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.product img {
+  width: 100%;
+  height: 100px; /* Smaller image size */
+  border-radius: 8px;
+  object-fit: cover; /* Ensures images fill the space */
+}
+
+.product-title {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+.product-price {
+  color: #d35400;
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.add-to-cart-btn {
+  background: #2e5c31;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.add-to-cart-btn i {
+  margin-right: 5px;
+}
+
+/* Bottom Navigation */
 .bottom-nav {
   display: flex;
   justify-content: space-around;
@@ -170,47 +313,82 @@ export default {
 }
 
 .bottom-nav i {
-  font-size: 24px;
+  font-size: 20px;
   color: #2e5c31;
   padding: 10px;
   cursor: pointer;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
+/* Media Queries for Mobile Responsiveness */
+@media (max-width: 480px) {
   .header {
     flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .app-title {
+    font-size: 1.2rem;
+  }
+
+  .search-container {
+    width: 100%;
+    margin: 5px 0;
   }
 
   .search-bar {
-    width: 90%;
-    margin-top: 10px;
+    width: 80%; /* Adjusted for mobile */
   }
 
   .icons {
-    margin-top: 10px;
+    gap: 5px;
+  }
+
+  .icons i {
+    font-size: 18px;
   }
 
   .categories {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
   }
 
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
-}
-
-@media (min-width: 1024px) {
-  .header {
-    padding: 20px;
+  .category {
+    flex: 1 1 30%; /* Adjusted for mobile */
+    max-width: 30%;
   }
 
-  .search-bar {
-    max-width: 400px;
+  .category-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .category-btn i {
+    font-size: 16px;
+  }
+
+  .category p {
+    font-size: 0.8rem;
+  }
+
+  .product {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .product-title {
+    font-size: 0.8rem;
+  }
+
+  .product-price {
+    font-size: 0.9rem;
+  }
+
+  .add-to-cart-btn {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
+
+  .bottom-nav i {
+    font-size: 18px;
   }
 }
 </style>

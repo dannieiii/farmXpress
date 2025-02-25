@@ -13,6 +13,7 @@ import AddCategory from '../views/AddCategory.vue';
 import Product from '../views/Product.vue';
 import AddProduct from '../views/AddProduct.vue';
 import Profile from '../views/Profile.vue';
+import EditProfile from '../views/EditProfile.vue';
 
 const routes = [
   {
@@ -79,6 +80,11 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: Profile
+  },
+  {
+    path: '/edit-profile',
+    name: 'editprofile',
+    component: EditProfile
   }
 ];
 
