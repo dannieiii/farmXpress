@@ -26,7 +26,7 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default {

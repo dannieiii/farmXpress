@@ -61,7 +61,7 @@
   </template>
   
   <script>
-  import { auth, db, storage } from "../firebaseConfig";
+  import { auth, db, storage } from "../../firebaseConfig";
   import { signOut } from "firebase/auth";
   import { doc, getDoc, updateDoc } from "firebase/firestore";
   import { ref, uploadBytes, getDownloadURL } from "firebase/storage";

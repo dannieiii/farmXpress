@@ -69,7 +69,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import { collection, getDocs, addDoc } from "firebase/firestore";
   
 export default {

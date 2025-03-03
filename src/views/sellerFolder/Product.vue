@@ -81,7 +81,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export default {

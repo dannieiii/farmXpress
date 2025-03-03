@@ -5,21 +5,21 @@ import Login from '../views/Login.vue';
 import ResetPassword from '../views/ResetPassword.vue';
 import ChangePassword from '../views/ChangePassword.vue';
 import HomeView from '../views/HomeView.vue';
-import SellerRegister from '../views/SellerRegister.vue';
-import SellerHome from '../views/SellerHome.vue';
-import ProductCategory from '../views/ProductCategory.vue';
-import Category from '../views/Category.vue';
-import AddCategory from '../views/AddCategory.vue';
-import Product from '../views/Product.vue';
-import AddProduct from '../views/AddProduct.vue';
-import Profile from '../views/Profile.vue';
-import EditProfile from '../views/EditProfile.vue';
-import SellerDashboard from '../views/SellerDashboard.vue';
-import ProductManagement from '../views/ProductManagement.vue';
-import AddEditProduct from '../views/AddEditProduct.vue';
-import Customers from "../views/Customers.vue";
-import Orders from "../views/Orders.vue";
-import Chat from "../views/Chat.vue";
+import SellerRegister from '../views/sellerFolder/SellerRegister.vue';
+import SellerHome from '../views/sellerFolder/SellerHome.vue';
+import ProductCategory from '../views/sellerFolder/ProductCategory.vue';
+import Category from '../views/sellerFolder/Category.vue';
+import AddCategory from '../views/adminFolder/AddCategory.vue';
+import Product from '../views/sellerFolder/Product.vue';
+import AddProduct from '../views/sellerFolder/AddProduct.vue';
+import Profile from '../views/customerFolder/Profile.vue';
+import EditProfile from '../views/customerFolder/EditProfile.vue';
+import SellerDashboard from '../views/sellerFolder/SellerDashboard.vue';
+import ProductManagement from '../views/sellerFolder/ProductManagement.vue';
+import AddEditProduct from '../views/sellerFolder/AddEditProduct.vue';
+import Customers from "../views/sellerFolder/Customers.vue";
+import Orders from "../views/sellerFolder/Orders.vue";
+import Chat from "../views/sellerFolder/Chat.vue";
 
 
 const routes = [

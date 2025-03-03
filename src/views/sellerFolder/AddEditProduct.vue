@@ -166,7 +166,7 @@
   <script setup>
   import { ref, computed, onMounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import Sidebar from '../components/Sidebar.vue';
+  import Sidebar from '@/components/Sidebar.vue';
   
   const route = useRoute();
   const router = useRouter();

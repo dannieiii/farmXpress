@@ -1,12 +1,12 @@
 <template>
     <div class="dashboard-container">
-      <Sidebar initialActiveItem="Customers" />
+      <Sidebar initialActiveItem="Orders" />
       
       <div class="main-content">
         <header class="header">
           <div class="page-title">
-            <h1>Customers</h1>
-            <p>Manage and view your customer information</p>
+            <h1>Orders</h1>
+            <p>Manage and track your customer orders</p>
           </div>
         </header>
   
@@ -15,57 +15,54 @@
             <div class="search-container">
               <div class="search-box">
                 <Search size="18" class="search-icon" />
-                <input type="text" placeholder="Search customers..." v-model="searchQuery" />
+                <input type="text" placeholder="Search orders..." v-model="searchQuery" />
               </div>
             </div>
-            <button class="add-customer-btn">
-              <UserPlus size="18" />
-              Add Customer
-            </button>
+            <div class="filter-dropdown">
+              <button class="filter-btn" @click="toggleFilterDropdown">
+                <Filter size="18" />
+                {{ activeFilter }}
+                <ChevronDown size="18" />
+              </button>
+              <div v-show="showFilterDropdown" class="filter-options">
+                <button v-for="filter in filterOptions" :key="filter" @click="setFilter(filter)">
+                  {{ filter }}
+                </button>
+              </div>
+            </div>
           </div>
   
-          <table class="customers-table">
+          <table class="orders-table">
             <thead>
               <tr>
+                <th>Order ID</th>
                 <th>Customer</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Orders</th>
-                <th>Total Spent</th>
+                <th>Date</th>
+                <th>Total</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="customer in filteredCustomers" :key="customer.id">
+              <tr v-for="order in filteredOrders" :key="order.id">
+                <td>#{{ order.id }}</td>
+                <td>{{ order.customer }}</td>
+                <td>{{ order.date }}</td>
+                <td>${{ order.total.toFixed(2) }}</td>
                 <td>
-                  <div class="customer-info">
-                    <div class="customer-avatar">
-                      <img :src="customer.avatar" :alt="`${customer.name}'s avatar`" />
-                    </div>
-                    <span>{{ customer.name }}</span>
-                  </div>
-                </td>
-                <td>{{ customer.email }}</td>
-                <td>{{ customer.phone }}</td>
-                <td>{{ customer.orderCount }}</td>
-                <td>${{ customer.totalSpent.toFixed(2) }}</td>
-                <td>
-                  <span :class="['status-badge', customer.status.toLowerCase()]">
-                    {{ customer.status }}
+                  <span :class="['status-badge', order.status.toLowerCase()]">
+                    {{ order.status }}
                   </span>
                 </td>
                 <td>
-                  <div class="action-buttons">
-                    <button class="action-btn view-btn">
-                      <Eye size="14" />
-                      View
-                    </button>
-                    <button class="action-btn edit-btn">
-                      <Edit size="14" />
-                      Edit
-                    </button>
-                  </div>
+                  <button class="action-btn view-btn">
+                    <Eye size="14" />
+                    View
+                  </button>
+                  <button class="action-btn edit-btn">
+                    <Edit size="14" />
+                    Edit
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -83,110 +80,41 @@
   
   <script setup>
   import { ref, computed } from 'vue';
-  import Sidebar from '../components/Sidebar.vue';
-  import { Search, UserPlus, Eye, Edit } from 'lucide-vue-next';
+  import Sidebar from '@/components/Sidebar.vue';
+  import { Search, Filter, ChevronDown, Eye, Edit } from 'lucide-vue-next';
   
   const searchQuery = ref('');
   const currentPage = ref(1);
   const itemsPerPage = 10;
+  const showFilterDropdown = ref(false);
+  const activeFilter = ref('All Orders');
   
-  const customers = [
-    { 
-      id: 1, 
-      name: 'John Doe', 
-      email: 'john@example.com', 
-      phone: '(555) 123-4567', 
-      avatar: 'https://randomuser.me/api/portraits/men/1.jpg', 
-      orderCount: 5, 
-      totalSpent: 250.50,
-      status: 'Active'
-    },
-    { 
-      id: 2, 
-      name: 'Jane Smith', 
-      email: 'jane@example.com', 
-      phone: '(555) 987-6543', 
-      avatar: 'https://randomuser.me/api/portraits/women/2.jpg', 
-      orderCount: 3, 
-      totalSpent: 150.75,
-      status: 'Active'
-    },
-    { 
-      id: 3, 
-      name: 'Bob Johnson', 
-      email: 'bob@example.com', 
-      phone: '(555) 246-8135', 
-      avatar: 'https://randomuser.me/api/portraits/men/3.jpg', 
-      orderCount: 7, 
-      totalSpent: 375.25,
-      status: 'Inactive'
-    },
-    { 
-      id: 4, 
-      name: 'Alice Brown', 
-      email: 'alice@example.com', 
-      phone: '(555) 369-8520', 
-      avatar: 'https://randomuser.me/api/portraits/women/4.jpg', 
-      orderCount: 2, 
-      totalSpent: 120.00,
-      status: 'Active'
-    },
-    { 
-      id: 5, 
-      name: 'Charlie Wilson', 
-      email: 'charlie@example.com', 
-      phone: '(555) 741-9630', 
-      avatar: 'https://randomuser.me/api/portraits/men/5.jpg', 
-      orderCount: 4, 
-      totalSpent: 200.50,
-      status: 'New'
-    },
-    { 
-      id: 6, 
-      name: 'Diana Miller', 
-      email: 'diana@example.com', 
-      phone: '(555) 852-7410', 
-      avatar: 'https://randomuser.me/api/portraits/women/6.jpg', 
-      orderCount: 1, 
-      totalSpent: 75.25,
-      status: 'Active'
-    },
-    { 
-      id: 7, 
-      name: 'Edward Davis', 
-      email: 'edward@example.com', 
-      phone: '(555) 963-8520', 
-      avatar: 'https://randomuser.me/api/portraits/men/7.jpg', 
-      orderCount: 6, 
-      totalSpent: 300.00,
-      status: 'Active'
-    },
-    { 
-      id: 8, 
-      name: 'Fiona Clark', 
-      email: 'fiona@example.com', 
-      phone: '(555) 159-7530', 
-      avatar: 'https://randomuser.me/api/portraits/women/8.jpg', 
-      orderCount: 3, 
-      totalSpent: 180.75,
-      status: 'Inactive'
-    }
+  const filterOptions = ['All Orders', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  
+  const orders = [
+    { id: 1001, customer: 'John Doe', date: '2023-05-01', total: 125.50, status: 'Delivered' },
+    { id: 1002, customer: 'Jane Smith', date: '2023-05-02', total: 75.25, status: 'Processing' },
+    { id: 1003, customer: 'Bob Johnson', date: '2023-05-03', total: 200.00, status: 'Pending' },
+    { id: 1004, customer: 'Alice Brown', date: '2023-05-04', total: 150.75, status: 'Shipped' },
+    { id: 1005, customer: 'Charlie Wilson', date: '2023-05-05', total: 95.50, status: 'Cancelled' },
+    // Add more order data here...
   ];
   
-  const filteredCustomers = computed(() => {
-    return customers.filter(customer => 
-      customer.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      customer.phone.includes(searchQuery.value)
+  const filteredOrders = computed(() => {
+    return orders.filter(order => 
+      (order.id.toString().includes(searchQuery.value) ||
+      order.customer.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      order.date.includes(searchQuery.value)) &&
+      (activeFilter.value === 'All Orders' || order.status === activeFilter.value)
     );
   });
   
-  const totalPages = computed(() => Math.ceil(filteredCustomers.value.length / itemsPerPage));
+  const totalPages = computed(() => Math.ceil(filteredOrders.value.length / itemsPerPage));
   
-  const paginatedCustomers = computed(() => {
+  const paginatedOrders = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredCustomers.value.slice(start, end);
+    return filteredOrders.value.slice(start, end);
   });
   
   const prevPage = () => {
@@ -199,6 +127,15 @@
     if (currentPage.value < totalPages.value) {
       currentPage.value++;
     }
+  };
+  
+  const toggleFilterDropdown = () => {
+    showFilterDropdown.value = !showFilterDropdown.value;
+  };
+  
+  const setFilter = (filter) => {
+    activeFilter.value = filter;
+    showFilterDropdown.value = false;
   };
   </script>
   
@@ -273,60 +210,67 @@
     font-size: 0.9rem;
   }
   
-  .add-customer-btn {
+  .filter-dropdown {
+    position: relative;
+  }
+  
+  .filter-btn {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background-color: #2e5c31;
-    color: #ffffff;
+    background-color: #f3f4f6;
     border: none;
     border-radius: 20px;
     font-size: 0.9rem;
+    color: #4b5563;
     cursor: pointer;
-    transition: background-color 0.2s;
   }
   
-  .add-customer-btn:hover {
-    background-color: #26492a;
+  .filter-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    z-index: 10;
   }
   
-  .customers-table {
+  .filter-options button {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #4b5563;
+    cursor: pointer;
+  }
+  
+  .filter-options button:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .orders-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
   }
   
-  .customers-table th,
-  .customers-table td {
+  .orders-table th,
+  .orders-table td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
   }
   
-  .customers-table th {
+  .orders-table th {
     font-weight: 600;
     color: #4b5563;
     background-color: #f9fafb;
-  }
-  
-  .customer-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .customer-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    overflow: hidden;
-  }
-  
-  .customer-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
   
   .status-badge {
@@ -337,24 +281,29 @@
     font-weight: 500;
   }
   
-  .status-badge.active {
-    background-color: #d1fae5;
-    color: #059669;
+  .status-badge.pending {
+    background-color: #fef3c7;
+    color: #d97706;
   }
   
-  .status-badge.inactive {
-    background-color: #fee2e2;
-    color: #dc2626;
+  .status-badge.processing {
+    background-color: #e0f2fe;
+    color: #0284c7;
   }
   
-  .status-badge.new {
+  .status-badge.shipped {
     background-color: #dbeafe;
     color: #2563eb;
   }
   
-  .action-buttons {
-    display: flex;
-    gap: 8px;
+  .status-badge.delivered {
+    background-color: #d1fae5;
+    color: #059669;
+  }
+  
+  .status-badge.cancelled {
+    background-color: #fee2e2;
+    color: #dc2626;
   }
   
   .action-btn {
@@ -432,19 +381,34 @@
   }
   
   :global(.dark) .search-box,
-  :global(.dark) .customers-table th,
+  :global(.dark) .filter-btn,
+  :global(.dark) .orders-table th,
   :global(.dark) .action-btn.edit-btn,
   :global(.dark) .page-btn {
     background-color: #374151;
   }
   
   :global(.dark) .search-box input,
-  :global(.dark) .customers-table th,
-  :global(.dark) .customers-table td {
+  :global(.dark) .filter-btn,
+  :global(.dark) .orders-table th,
+  :global(.dark) .orders-table td {
     color: #e5e7eb;
   }
   
-  :global(.dark) .customers-table td {
+  :global(.dark) .filter-options {
+    background-color: #1f2937;
+    border-color: #4b5563;
+  }
+  
+  :global(.dark) .filter-options button {
+    color: #e5e7eb;
+  }
+  
+  :global(.dark) .filter-options button:hover {
+    background-color: #374151;
+  }
+  
+  :global(.dark) .orders-table td {
     border-color: #4b5563;
   }
   
@@ -462,4 +426,5 @@
     background-color: #4b5563;
   }
   </style>
+  
   

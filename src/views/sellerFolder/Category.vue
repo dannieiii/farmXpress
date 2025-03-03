@@ -52,7 +52,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 

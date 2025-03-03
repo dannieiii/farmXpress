@@ -136,7 +136,7 @@
   
   <script setup>
   import { ref, computed } from 'vue';
-  import Sidebar from '../components/Sidebar.vue';
+  import Sidebar from '@/components/Sidebar.vue';
   import { 
     Search, 
     Phone, 

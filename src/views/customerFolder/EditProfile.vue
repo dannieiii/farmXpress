@@ -28,7 +28,7 @@
   </template>
   
   <script>
-  import { auth, db } from "../firebaseConfig";
+  import { auth, db } from "../../firebaseConfig";
   import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
   import { doc, getDoc, updateDoc } from "firebase/firestore";
   

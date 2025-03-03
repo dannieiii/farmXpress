@@ -290,7 +290,7 @@ import {
   Clock
 } from 'lucide-vue-next';
 import Chart from 'chart.js/auto';
-import Sidebar from '../components/Sidebar.vue';
+import Sidebar from '@/components/Sidebar.vue';
 
 // Profile dropdown state
 const showProfileMenu = ref(false);

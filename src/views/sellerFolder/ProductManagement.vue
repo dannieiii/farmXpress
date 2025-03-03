@@ -224,7 +224,7 @@
     MessageSquare,
     Clock
   } from 'lucide-vue-next';
-  import Sidebar from '../components/Sidebar.vue';
+  import Sidebar from '@/components/Sidebar.vue';
   
   const router = useRouter();
   

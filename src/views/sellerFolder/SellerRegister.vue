@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, getDoc } from "firebase/firestore";
