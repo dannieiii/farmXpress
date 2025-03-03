@@ -61,41 +61,13 @@
       </div>
     </div>
 
-    <!-- Featured Products -->
+    <!-- New Products Section -->
     <div class="product-section">
       <h2>New Collection</h2>
       <div class="product-list">
-        <div class="product">
-          <img src="@/assets/picture1.jpg" alt="Product" />
-          <p class="product-title">Garlic Butter Roast Chicken</p>
-          <span class="product-price">₱320</span>
-          <button class="add-to-cart-btn">
-            <i class="fas fa-shopping-basket"></i> Add to Cart
-          </button>
-        </div>
-        <div class="product">
-          <img src="@/assets/picture1.jpg" alt="Product" />
-          <p class="product-title">Healthy Premium Steak</p>
-          <span class="product-price">₱450</span>
-          <button class="add-to-cart-btn">
-            <i class="fas fa-shopping-basket"></i> Add to Cart
-          </button>
-        </div>
-        <div class="product">
-          <img src="@/assets/picture1.jpg" alt="Product" />
-          <p class="product-title">Fresh Organic Apples</p>
-          <span class="product-price">₱120</span>
-          <button class="add-to-cart-btn">
-            <i class="fas fa-shopping-basket"></i> Add to Cart
-          </button>
-        </div>
-        <div class="product">
-          <img src="@/assets/picture1.jpg" alt="Product" />
-          <p class="product-title">Farm-Grown Carrots</p>
-          <span class="product-price">₱80</span>
-          <button class="add-to-cart-btn">
-            <i class="fas fa-shopping-basket"></i> Add to Cart
-          </button>
+        <div class="product" v-for="(product, index) in products" :key="index">
+          <img :src="product.image" alt="Product" />
+          <span class="product-price">₱{{ product.price }}</span>
         </div>
       </div>
     </div>
@@ -106,26 +78,60 @@
       <i class="fas fa-heart"></i>
       <i class="fas fa-shopping-cart"></i>
       <i class="fas fa-box"></i>
-      <i class="fas fa-bell"></i>
     </div>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+import { db } from "../firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
+
 export default {
-  name: "UserHome",
-  data() {
-    return {
-      showDropdown: false,
+  setup() {
+    const products = ref([]);
+
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        products.value = querySnapshot.docs.map(doc => doc.data());
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     };
-  },
-  methods: {
-    toggleDropdown() {
-      this.showDropdown = !this.showDropdown;
-    },
-  },
+
+    onMounted(fetchProducts);
+
+    return { products };
+  }
 };
 </script>
+
+<style scoped>
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.product {
+  width: 120px;
+  text-align: center;
+}
+
+.product img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.product-price {
+  font-weight: bold;
+  color: #28a745;
+}
+</style>
+
 
 <style scoped>
 .user-home {

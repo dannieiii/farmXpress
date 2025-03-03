@@ -9,6 +9,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
 
+
+
+
 // Initialize Firebase Authentication
 const auth = getAuth();
 

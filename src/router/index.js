@@ -14,6 +14,13 @@ import Product from '../views/Product.vue';
 import AddProduct from '../views/AddProduct.vue';
 import Profile from '../views/Profile.vue';
 import EditProfile from '../views/EditProfile.vue';
+import SellerDashboard from '../views/SellerDashboard.vue';
+import ProductManagement from '../views/ProductManagement.vue';
+import AddEditProduct from '../views/AddEditProduct.vue';
+import Customers from "../views/Customers.vue";
+import Orders from "../views/Orders.vue";
+import Chat from "../views/Chat.vue";
+
 
 const routes = [
   {
@@ -85,6 +92,41 @@ const routes = [
     path: '/edit-profile',
     name: 'editprofile',
     component: EditProfile
+  },
+  {
+    path: '/seller-dashboard',
+    name: 'sellerdashboard',
+    component: SellerDashboard
+  },
+  {
+    path: '/products',
+    name: 'productmanagement',
+    component: ProductManagement
+  },
+  {
+    path: '/addproduct',
+    name: 'AddProduct',
+    component: AddEditProduct
+  },
+  {
+    path: '/edit-product/:id',
+    name: 'EditProduct',
+    component: AddEditProduct
+  },
+  {
+    path: "/customers",
+    name: "Customers",
+    component: Customers,
+  },
+  {
+    path: "/orders",
+    name: "Orders",
+    component: Orders,
+  },
+  {
+    path: "/chat",
+    name: "Chat",
+    component: Chat,
   }
 ];
 

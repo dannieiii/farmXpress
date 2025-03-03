@@ -1,41 +1,72 @@
 <template>
-  
-
   <div class="register-container">
-    
-    <!-- Alert Box -->
-    <div v-if="alertMessage" :class="['alert-box', alertType]">
-      {{ alertMessage }}
-    </div>
-
-    <div class="header">
-      <span class="back-icon"><a href="/login">←</a></span>
-      <h2>CREATE ACCOUNT</h2>
-    </div>
-
-
-    <div class="register-box">
-      <input type="text" v-model="firstName" placeholder="First Name" required />
-      <input type="text" v-model="lastName" placeholder="Last Name" required />
-      <input type="text" v-model="username" placeholder="Username" required />
-      <input type="email" v-model="email" placeholder="Email" required />
-      <input type="text" v-model="contactNumber" placeholder="Contact Number" required />
-      <input type="text" v-model="address" placeholder="Address" required />
-    
-      <div class="input-container">
-        <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Password" required />
-        <span class="eye-icon" @click="togglePassword">
-          <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-        </span>
-      </div>
-      <div class="input-container">
-        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword" placeholder="Confirm Password" required />
-        <span class="eye-icon" @click="toggleConfirmPassword">
-          <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-        </span>
+    <div class="register-content">
+      <div class="logo-container">
+        <img src="@/assets/logo.png" alt="FarmXpress Logo" class="logo" />
+        <h1 class="app-title">FarmXpress</h1>
+        <h3 class="app-subtitle">MOBILE APP</h3>
       </div>
 
-      <button class="register-button" @click="register">Create Account</button>
+      <transition name="fade">
+        <div v-if="alertMessage" :class="['alert-box', alertType]">
+          {{ alertMessage }}
+        </div>
+      </transition>
+
+      <div class="register-box">
+        <h2 class="register-title">Create Account</h2>
+        
+        <div class="input-container">
+          <i class="fas fa-user icon"></i>
+          <input type="text" v-model="firstName" placeholder="First Name" required />
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-user icon"></i>
+          <input type="text" v-model="lastName" placeholder="Last Name" required />
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-user-circle icon"></i>
+          <input type="text" v-model="username" placeholder="Username" required />
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-envelope icon"></i>
+          <input type="email" v-model="email" placeholder="Email" required />
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-phone icon"></i>
+          <input type="text" v-model="contactNumber" placeholder="Contact Number" required />
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-map-marker-alt icon"></i>
+          <input type="text" v-model="address" placeholder="Address" required />
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-lock icon"></i>
+          <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Password" required />
+          <i :class="['fas', showPassword ? 'fa-eye-slash' : 'fa-eye', 'toggle-password']" @click="togglePassword"></i>
+        </div>
+        
+        <div class="input-container">
+          <i class="fas fa-lock icon"></i>
+          <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword" placeholder="Confirm Password" required />
+          <i :class="['fas', showConfirmPassword ? 'fa-eye-slash' : 'fa-eye', 'toggle-password']" @click="toggleConfirmPassword"></i>
+        </div>
+
+        <button class="register-button" @click="register">
+          <span>Create Account</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+
+        <div class="login-link" @click="$router.push('/login')">
+          Already have an account? <span>Log In</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -120,115 +151,185 @@ export default {
 <style scoped>
 .register-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f4f4f9;
+  background: linear-gradient(135deg, #2e5c31, #4a8f4d);
   padding: 20px;
 }
 
-.header {
-  background: #2e5c31;
+.register-content {
   width: 100%;
-  max-width: 380px;
-  padding: 10px;
+  max-width: 400px;
+}
+
+.logo-container {
   text-align: center;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
 }
 
-.back-icon {
-  position: absolute;
-  left: 15px;
-  top: 10px;
-  color: white;
-  cursor: pointer;
-  font-size: 20px;
+.logo {
+  width: 120px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
-h2 {
-  color: white;
-  font-size: 22px;
+.app-title {
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: bold;
   margin: 0;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-subtitle {
+  color: #e0e0e0;
+  font-size: 18px;
+  margin: 5px 0 0;
+  letter-spacing: 3px;
 }
 
 .alert-box {
-  width: 100%;
-  max-width: 380px;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
   text-align: center;
   font-size: 14px;
-  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .success {
-  background-color: #d4edda;
+  background: #d4edda;
   color: #155724;
-  border: 1px solid #c3e6cb;
 }
 
 .error {
-  background-color: #f8d7da;
+  background: #f8d7da;
   color: #721c24;
-  border: 1px solid #f5c6cb;
 }
 
 .register-box {
   background: white;
   border-radius: 20px;
-  padding: 20px;
-  width: 100%;
-  max-width: 380px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-input[type="email"],
-input[type="text"],
-input[type="password"],
-select {
-  width: 100%;
-  padding: 10px 15px;
-  margin: 8px 0;
-  border-radius: 25px;
-  border: 1px solid #ccc;
-  outline: none;
-  font-size: 14px;
-  box-sizing: border-box;
+.register-title {
+  font-size: 24px;
+  color: #2e5c31;
+  margin-bottom: 25px;
+  text-align: center;
 }
 
 .input-container {
-  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 50px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
 }
 
-.eye-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
+.input-container:focus-within {
+  box-shadow: 0 0 0 2px #2e5c31;
+}
+
+.icon {
+  margin-right: 10px;
+  color: #2e5c31;
+  font-size: 18px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  color: #333;
+}
+
+.toggle-password {
   cursor: pointer;
-  color: #999;
+  color: #2e5c31;
 }
 
 .register-button {
   background: #2e5c31;
   color: white;
   border: none;
-  border-radius: 25px;
-  padding: 10px;
+  border-radius: 50px;
+  padding: 14px;
   width: 100%;
-  font-size: 14px;
+  font-size: 18px;
   cursor: pointer;
-  transition: background 0.3s;
-  margin-top: 10px;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .register-button:hover {
   background: #26492a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.register-button span {
+  margin-right: 10px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  font-size: 14px;
+}
+
+.login-link span {
+  color: #2e5c31;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-link span:hover {
+  text-decoration: underline;
+}
+
+/* Fade transition for alert box */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 480px) {
+  .register-box {
+    padding: 25px;
+  }
+
+  .app-title {
+    font-size: 30px;
+  }
+
+  .app-subtitle {
+    font-size: 16px;
+  }
+
+  .input-container {
+    padding: 10px 15px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    font-size: 14px;
+  }
 }
 </style>
