@@ -13,6 +13,8 @@ import AddCategory from '../views/adminFolder/AddCategory.vue';
 import Product from '../views/sellerFolder/Product.vue';
 import AddProduct from '../views/sellerFolder/AddProduct.vue';
 import Profile from '../views/customerFolder/Profile.vue';
+import ProductDetails from '../views/customerFolder/ProductDetails.vue';
+import Cart from '../views/customerFolder/Cart.vue';
 import EditProfile from '../views/customerFolder/EditProfile.vue';
 import SellerDashboard from '../views/sellerFolder/SellerDashboard.vue';
 import ProductManagement from '../views/sellerFolder/ProductManagement.vue';
@@ -21,6 +23,9 @@ import Customers from "../views/sellerFolder/Customers.vue";
 import Orders from "../views/sellerFolder/Orders.vue";
 import Chat from "../views/sellerFolder/Chat.vue";
 
+import Likes from '../views/customerFolder/Likes.vue';
+import Messages from '../views/customerFolder/Messages.vue';
+import CustomerOrders from '../views/customerFolder/CustomerOrders.vue';
 
 const routes = [
   {
@@ -127,6 +132,31 @@ const routes = [
     path: "/chat",
     name: "Chat",
     component: Chat,
+  },
+  {
+    path: "/product-details",
+    name: "productdetails",
+    component: ProductDetails,
+  },
+  {
+    path: "/cart",
+    name: "Cart",
+    component: Cart,
+  },
+  {
+    path: "/likes",
+    name: "Likes",
+    component: Likes,
+  },
+  {
+    path: "/messages",
+    name: "Messages",
+    component: Messages,
+  },
+  {
+    path: "/customer-orders",
+    name: "CustomerOrders",
+    component: CustomerOrders,
   }
 ];
 
